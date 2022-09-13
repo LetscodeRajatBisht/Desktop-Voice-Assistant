@@ -1,0 +1,87 @@
+import pyttsx3
+import datetime
+import speech_recognition as sr
+import wikipedia
+import webbrowser
+import os
+
+engine = pyttsx3.init("sapi5")
+voices = engine.getProperty('voices')
+engine.setProperty('voices', voices[0].id)
+
+
+def speak(audio):
+    engine.say(audio)
+    engine.runAndWait()
+
+def wishme():
+    hour = int(datetime.datetime.now().hour)
+    if hour>=6 and hour<12:
+        speak("Good Morning Sir")
+    elif hour>=12 and hour <17:
+        speak("Good afternoon sir")
+    elif hour>17 and hour<20 :
+        speak("Good Evening sir")
+    else:
+        speak("Good Night sir")
+
+    speak("I'm BTB. How may i help you")
+
+def takecommand():
+# It will take mic input and return string output
+
+    r = sr.Recognizer()
+    with sr.Microphone() as source:
+        print("Listening....")
+        r.pause_threshold = 1
+        audio = r.listen(source, phrase_time_limit=3)
+
+    try:
+        print("Recognizing..")
+        query = r.recognize_google(audio, language='en-in')
+        print(f"user said: {query}\n")
+
+    except Exception as e:
+        print("Say that again please...")
+        return "None"
+
+    return query
+
+
+
+if __name__ == "__main__":
+   wishme()
+   while True:
+    query = takecommand().lower()
+
+   # Logic for exectuting tasks based on query
+    if 'wikipedia' in query:
+        speak('Seaching wikipedia....')
+        query = query.replace("wikipedia", "")
+        results = wikipedia.summary(query, sentences=2)
+        speak("According to wikipedia")
+        speak(results)
+
+    elif 'open youtube' in query:
+        webbrowser.open("youtube.com")
+
+    elif 'open google' in query:
+        webbrowser.open("google.com")
+
+    elif 'open stackoverflow' in query:
+        webbrowser.open("stackoverflow.com")
+
+    elif 'open spotify' in query:
+        webbrowser.open("spotify.com")
+
+    elif 'time' in query:
+        strtime = datetime.datetime.now().strftime("%H:%M:%S")
+        speak(f"Sir the time is{strtime}")
+
+    elif 'play music' in query:
+        os.system("start C:\\Users\\rajat_1\\Downloads\\yt1s.mp3.mp3" )
+
+
+
+
+
